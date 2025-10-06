@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/kash2104/taskflow/master/pb";
+
+
+service ExecuteTask{
+    rpc GetExecutionRequest(ExecutionRequest) returns (ExecutionResponse){}
+    rpc UpdateTaskStatus(UpdateRequest) returns (UpdateResponse) {}
+}
+
+
+message ExecutionRequest {}
+
+message ExecutionResponse{
+    string Id = 1;
+    string Code = 2;
+    string Language = 3;
+    string Status = 4;
+    string Result = 5;
+}
+
+
+message UpdateRequest{
+    string Id = 1;
+}
+message UpdateResponse {}
