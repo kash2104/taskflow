@@ -136,6 +136,7 @@ func (x *ExecutionResponse) GetResult() string {
 type UpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=Id,proto3" json:"Id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=Status,proto3" json:"Status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -173,6 +174,13 @@ func (*UpdateRequest) Descriptor() ([]byte, []int) {
 func (x *UpdateRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdateRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
 	}
 	return ""
 }
@@ -224,9 +232,10 @@ const file_master_pb_task_proto_rawDesc = "" +
 	"\x04Code\x18\x02 \x01(\tR\x04Code\x12\x1a\n" +
 	"\bLanguage\x18\x03 \x01(\tR\bLanguage\x12\x16\n" +
 	"\x06Status\x18\x04 \x01(\tR\x06Status\x12\x16\n" +
-	"\x06Result\x18\x05 \x01(\tR\x06Result\"\x1f\n" +
+	"\x06Result\x18\x05 \x01(\tR\x06Result\"7\n" +
 	"\rUpdateRequest\x12\x0e\n" +
-	"\x02Id\x18\x01 \x01(\tR\x02Id\"\x10\n" +
+	"\x02Id\x18\x01 \x01(\tR\x02Id\x12\x16\n" +
+	"\x06Status\x18\x02 \x01(\tR\x06Status\"\x10\n" +
 	"\x0eUpdateResponse2\x90\x01\n" +
 	"\vExecuteTask\x12D\n" +
 	"\x13GetExecutionRequest\x12\x14.pb.ExecutionRequest\x1a\x15.pb.ExecutionResponse\"\x00\x12;\n" +

@@ -24,5 +24,6 @@ message ExecutionResponse{
 
 message UpdateRequest{
     string Id = 1;
+    string Status = 2;
 }
 message UpdateResponse {}
