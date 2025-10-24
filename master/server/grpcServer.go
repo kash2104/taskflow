@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"github.com/kash2104/taskflow/master/db"
 	"github.com/kash2104/taskflow/master/pb"
@@ -21,6 +22,7 @@ type server struct{
 
 
 var taskQueue queue.Queue;
+var pendingQueue PendingTaskQueue; 
 
 func StartGRPCServer(taskChannel chan db.UserRequest){
 
@@ -36,7 +38,7 @@ func StartGRPCServer(taskChannel chan db.UserRequest){
 	
 	TaskChannel = taskChannel
 	
-	// adding the userRequest from channel to queue
+	// adding the userRequest from taskchannel to queue
 	go func(){
 		for task := range TaskChannel{
 			
@@ -44,7 +46,16 @@ func StartGRPCServer(taskChannel chan db.UserRequest){
 			log.Println("User Request added from channel to queue");
 		}
 	}()
-	
+
+	/*adding the task which are not completed withing 15 seconds back to the pending queue
+	*/
+	go func(){
+		for task := range PendingChannel{
+			pendingQueue.AddPendingTask(task);
+			log.Println("Task added to pending queue from pending channel")
+		}
+	}()
+
 	go func(){
 		fmt.Println("grpc server is running on port" + port);
 	
@@ -67,7 +78,7 @@ func (s *server) GetExecutionRequest(context context.Context ,req *pb.ExecutionR
 
 
 	if taskQueue.IsEmpty() {
-		return &dummyTask, nil
+		return &dummyTask, fmt.Errorf("queue empty")
 	}else{
 		task,_ := taskQueue.Top()
 		
@@ -78,6 +89,12 @@ func (s *server) GetExecutionRequest(context context.Context ,req *pb.ExecutionR
 		executionTask.Result = task.Result
 
 		taskQueue.Pop()
+		
+		//Add task to Pending channel
+		var pendingTask = PendingTask{};
+		pendingTask.Task = task;
+		pendingTask.TimeStamp = time.Now();
+		PendingChannel <- pendingTask;
 
 		return &executionTask, nil
 	}
@@ -87,6 +104,7 @@ func (s *server) GetExecutionRequest(context context.Context ,req *pb.ExecutionR
 func (s * server) UpdateTaskStatus(context context.Context, req *pb.UpdateRequest) (*pb.UpdateResponse, error){
 
 	id := req.Id
+	status := req.Status
 
 	objectId, err := primitive.ObjectIDFromHex(id);
 
@@ -95,13 +113,35 @@ func (s * server) UpdateTaskStatus(context context.Context, req *pb.UpdateReques
 		return nil,err
 	}
 
-	result, err := db.UpdateStatus(objectId);
+	_, err = db.UpdateStatus(objectId, status);
 	if err != nil{
 		fmt.Println("Error in rpc from the UpdateStatus db call");
 		return nil, err;
 	}
 
-	fmt.Println("Updated status via rpc call: ", result);
+	fmt.Println("Updated status via rpc call");
+
+	return nil,nil
+}
+
+func (s *server) UpdateTaskResult(context context.Context, req *pb.UpdateRequest)(*pb.UpdateResponse, error){
+	id := req.Id
+	result := req.Status
+
+	objectId,err := primitive.ObjectIDFromHex(id);
+
+	if err != nil{
+		fmt.Printf("error converting id from string to objectid %v",err);
+		return nil,err
+	}
+
+	_, err = db.UpdateResult(objectId,result);
+	if err != nil{
+		fmt.Println("Error in rpc from the UpdateResult db call");
+		return nil, err;
+	}
+
+	fmt.Println("updated result via rpc call");
 
 	return nil,nil
 }
