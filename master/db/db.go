@@ -13,11 +13,11 @@ import (
 )
 
 type UserRequest struct{
-	Id primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Code string `json:"code" bson:"code"`
-	Language string `json:"language" bson:"language"`
-	Status string `json:"status" bson:"status"`
-	Result string `json:"result" bson:"result"`
+	Id primitive.ObjectID `json:"Id" bson:"_id,omitempty"`
+	Code string `json:"Code" bson:"code"`
+	Language string `json:"Language" bson:"language"`
+	Status string `json:"Status" bson:"status"`
+	Result string `json:"Result" bson:"result"`
 }
 
 
@@ -111,14 +111,14 @@ func CheckPending(taskId primitive.ObjectID) (bool, error){
 	}
 
 	if result.Status == "Pending"{
-		return false, nil;
+		return true, nil;
 	}
 
-	return true, nil;
+	return false, nil;
 
 }
 
-func UpdateStatus(id primitive.ObjectID) (UserRequest, error){
+func UpdateStatus(id primitive.ObjectID, status string) (UserRequest, error){
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second);
 	defer cancel();
 
@@ -128,12 +128,12 @@ func UpdateStatus(id primitive.ObjectID) (UserRequest, error){
 
 	var result UserRequest;
 
-	filter := bson.M{"_id":id, "status":"Pending"};
+	filter := bson.M{"_id":id};
 	err := collection.FindOne(ctx,filter).Decode(&result);
 
 	if err != nil{
 		if err == mongo.ErrNoDocuments{
-			return result, fmt.Errorf("no document found with the given id or the task is not pending");
+			return result, fmt.Errorf("no document found with the given id");
 		}
 		return result, fmt.Errorf("failed to find document: %v", err);
 	}
@@ -141,7 +141,7 @@ func UpdateStatus(id primitive.ObjectID) (UserRequest, error){
 	
 	update := bson.M{
 		"$set": bson.M{
-			"status": "Completed",
+			"status": status,
 		},
 	}
 
@@ -150,7 +150,37 @@ func UpdateStatus(id primitive.ObjectID) (UserRequest, error){
 		return result, fmt.Errorf("failed to update document: %v", err);
 	}
 
-	result.Status = "Completed";
+	result.Status = status;
 	
 	return result, nil;
+}
+
+func UpdateResult(id primitive.ObjectID, result string)(bool, error){
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second);
+
+	defer cancel();
+
+	if id.IsZero(){
+		return false,fmt.Errorf("id cannot be empty");
+	}
+
+	filter := bson.M{"_id":id};
+	existingResult := collection.FindOne(ctx,filter);
+	if existingResult != nil{
+		return false, fmt.Errorf("no document foudn with this id");
+	}
+
+	updatedResult := bson.M{
+		"$set":bson.M{
+			"result": result,
+		},
+	}
+
+	_, err := collection.UpdateOne(ctx,filter,updatedResult)
+
+	if err != nil{
+		return false, fmt.Errorf("failed to update document: %v", err);
+	}
+
+	return true, nil;
 }
