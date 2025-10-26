@@ -166,8 +166,11 @@ func UpdateResult(id primitive.ObjectID, result string)(bool, error){
 
 	filter := bson.M{"_id":id};
 	existingResult := collection.FindOne(ctx,filter);
-	if existingResult != nil{
-		return false, fmt.Errorf("no document foudn with this id");
+	if err := existingResult.Err(); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false, fmt.Errorf("no document found with this id")
+		}
+		return false, fmt.Errorf("failed to find document: %v", err)
 	}
 
 	updatedResult := bson.M{
