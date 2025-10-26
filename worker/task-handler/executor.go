@@ -119,6 +119,65 @@ func RunTask(task *Task,ctx context.Context) (string, error){
 				return "",errors.New("compilation went wrong");
 			}
 
+			stdout,stderr,errr := runners.RunJava(taskId,task.Code);
+
+			if errr != nil{
+				_, err := Client.UpdateTaskStatus(ctx,&pb.UpdateRequest{
+					Id: task.Id,
+					Status: "Time limit exceeded",
+				})
+
+				if err != nil{
+					log.Fatalf("Failed to update the database after tle %v",err);
+				}
+
+				return "", errors.New("time task execution failed");
+			}
+
+			fmt.Println("Task execution successful");
+			combinedOutput := "STDOUT:\n" + stdout + "\n\nSTDERR:\n" + stderr
+			// fmt.Println(combinedOutput);
+			return combinedOutput,nil
+		case "go":
+			stdout,stderr, errr := runners.RunGo(taskId, task.Code);
+
+			if errr != nil{
+				_, err := Client.UpdateTaskStatus(ctx, &pb.UpdateRequest{
+					Id: task.Id,
+					Status: "Time limited exceeded",
+				})
+
+				if err != nil{
+					log.Fatalf("failed to update the database after tle %v", err);
+				}
+				return "", errors.New("time task execution failed");
+			}
+
+			fmt.Println("task execution successful");
+			combinedOutput := "STDOUT:\n" + stdout + "\n\nSTDERR:\n" + stderr
+
+			return combinedOutput, nil
+
+		case "py":
+			stdout,stderr, errr := runners.RunPython(taskId, task.Code);
+
+			fmt.Println(errr);
+			if errr != nil{
+				_, err := Client.UpdateTaskStatus(ctx, &pb.UpdateRequest{
+					Id: task.Id,
+					Status: "Time limited exceeded",
+				})
+
+				if err != nil{
+					log.Fatalf("failed to update the database after tle %v", err);
+				}
+				return "", errors.New("time task execution failed");
+			}
+
+			fmt.Println("task execution successful");
+			combinedOutput := "STDOUT:\n" + stdout + "\n\nSTDERR:\n" + stderr
+
+			return combinedOutput, nil
 	}
 
 	return "Language not identified",nil;

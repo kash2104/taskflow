@@ -9,7 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var basePath string = "/var/local/lib/isolate/"
 
 func CompileCpp(taskId primitive.ObjectID, code string) error{
 	boxId:= ConvertNumberFromHex(taskId)
