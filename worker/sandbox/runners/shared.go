@@ -8,6 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var basePath string = "/var/local/lib/isolate/"
+
 
 func ConvertNumberFromHex(taskId primitive.ObjectID) string {
 	number, _ := strconv.ParseInt(taskId.Hex()[len(taskId.Hex())-2:], 16, 64)
@@ -20,7 +22,7 @@ func ConvertNumberFromHex(taskId primitive.ObjectID) string {
 func WriteCodeToSandbox(taskId primitive.ObjectID, code string, language string) (string ,error) {
 	boxId:= ConvertNumberFromHex(taskId)
 	
-	fileName := fmt.Sprintf("/var/local/lib/isolate/%s/box/main_%s.%s",boxId,boxId,language);
+	fileName := fmt.Sprintf(basePath+"%s/box/main_%s.%s",boxId,boxId,language);
 
 	err := os.WriteFile(fileName,[]byte(code),0644);
 	if err != nil{
