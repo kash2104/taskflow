@@ -48,7 +48,7 @@ func RunAndCompute(ctx context.Context, task *pb.ExecutionResponse)(bool, error)
 			return;
 		}
 
-		_, err = Client.UpdateTaskStatus(ctx, &pb.UpdateRequest{
+		_, err = Client.UpdateTaskResult(ctx, &pb.UpdateRequest{
 			Id: task.Id,
 			Status: result,
 		})
