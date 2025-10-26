@@ -8,6 +8,7 @@ option go_package = "github.com/kash2104/taskflow/master/pb";
 service ExecuteTask{
     rpc GetExecutionRequest(ExecutionRequest) returns (ExecutionResponse){}
     rpc UpdateTaskStatus(UpdateRequest) returns (UpdateResponse) {}
+    rpc UpdateTaskResult(UpdateRequest) returns (UpdateResponse) {}
 }
 
 

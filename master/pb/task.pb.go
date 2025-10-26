@@ -236,10 +236,11 @@ const file_master_pb_task_proto_rawDesc = "" +
 	"\rUpdateRequest\x12\x0e\n" +
 	"\x02Id\x18\x01 \x01(\tR\x02Id\x12\x16\n" +
 	"\x06Status\x18\x02 \x01(\tR\x06Status\"\x10\n" +
-	"\x0eUpdateResponse2\x90\x01\n" +
+	"\x0eUpdateResponse2\xcd\x01\n" +
 	"\vExecuteTask\x12D\n" +
 	"\x13GetExecutionRequest\x12\x14.pb.ExecutionRequest\x1a\x15.pb.ExecutionResponse\"\x00\x12;\n" +
-	"\x10UpdateTaskStatus\x12\x11.pb.UpdateRequest\x1a\x12.pb.UpdateResponse\"\x00B(Z&github.com/kash2104/taskflow/master/pbb\x06proto3"
+	"\x10UpdateTaskStatus\x12\x11.pb.UpdateRequest\x1a\x12.pb.UpdateResponse\"\x00\x12;\n" +
+	"\x10UpdateTaskResult\x12\x11.pb.UpdateRequest\x1a\x12.pb.UpdateResponse\"\x00B(Z&github.com/kash2104/taskflow/master/pbb\x06proto3"
 
 var (
 	file_master_pb_task_proto_rawDescOnce sync.Once
@@ -263,10 +264,12 @@ var file_master_pb_task_proto_goTypes = []any{
 var file_master_pb_task_proto_depIdxs = []int32{
 	0, // 0: pb.ExecuteTask.GetExecutionRequest:input_type -> pb.ExecutionRequest
 	2, // 1: pb.ExecuteTask.UpdateTaskStatus:input_type -> pb.UpdateRequest
-	1, // 2: pb.ExecuteTask.GetExecutionRequest:output_type -> pb.ExecutionResponse
-	3, // 3: pb.ExecuteTask.UpdateTaskStatus:output_type -> pb.UpdateResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	2, // 2: pb.ExecuteTask.UpdateTaskResult:input_type -> pb.UpdateRequest
+	1, // 3: pb.ExecuteTask.GetExecutionRequest:output_type -> pb.ExecutionResponse
+	3, // 4: pb.ExecuteTask.UpdateTaskStatus:output_type -> pb.UpdateResponse
+	3, // 5: pb.ExecuteTask.UpdateTaskResult:output_type -> pb.UpdateResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

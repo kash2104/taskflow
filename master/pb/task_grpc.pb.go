@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	ExecuteTask_GetExecutionRequest_FullMethodName = "/pb.ExecuteTask/GetExecutionRequest"
 	ExecuteTask_UpdateTaskStatus_FullMethodName    = "/pb.ExecuteTask/UpdateTaskStatus"
+	ExecuteTask_UpdateTaskResult_FullMethodName    = "/pb.ExecuteTask/UpdateTaskResult"
 )
 
 // ExecuteTaskClient is the client API for ExecuteTask service.
@@ -29,6 +30,7 @@ const (
 type ExecuteTaskClient interface {
 	GetExecutionRequest(ctx context.Context, in *ExecutionRequest, opts ...grpc.CallOption) (*ExecutionResponse, error)
 	UpdateTaskStatus(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
+	UpdateTaskResult(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 }
 
 type executeTaskClient struct {
@@ -59,12 +61,23 @@ func (c *executeTaskClient) UpdateTaskStatus(ctx context.Context, in *UpdateRequ
 	return out, nil
 }
 
+func (c *executeTaskClient) UpdateTaskResult(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateResponse)
+	err := c.cc.Invoke(ctx, ExecuteTask_UpdateTaskResult_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ExecuteTaskServer is the server API for ExecuteTask service.
 // All implementations must embed UnimplementedExecuteTaskServer
 // for forward compatibility.
 type ExecuteTaskServer interface {
 	GetExecutionRequest(context.Context, *ExecutionRequest) (*ExecutionResponse, error)
 	UpdateTaskStatus(context.Context, *UpdateRequest) (*UpdateResponse, error)
+	UpdateTaskResult(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	mustEmbedUnimplementedExecuteTaskServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedExecuteTaskServer) GetExecutionRequest(context.Context, *Exec
 }
 func (UnimplementedExecuteTaskServer) UpdateTaskStatus(context.Context, *UpdateRequest) (*UpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
+}
+func (UnimplementedExecuteTaskServer) UpdateTaskResult(context.Context, *UpdateRequest) (*UpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskResult not implemented")
 }
 func (UnimplementedExecuteTaskServer) mustEmbedUnimplementedExecuteTaskServer() {}
 func (UnimplementedExecuteTaskServer) testEmbeddedByValue()                     {}
@@ -138,6 +154,24 @@ func _ExecuteTask_UpdateTaskStatus_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExecuteTask_UpdateTaskResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExecuteTaskServer).UpdateTaskResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExecuteTask_UpdateTaskResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExecuteTaskServer).UpdateTaskResult(ctx, req.(*UpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ExecuteTask_ServiceDesc is the grpc.ServiceDesc for ExecuteTask service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var ExecuteTask_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTaskStatus",
 			Handler:    _ExecuteTask_UpdateTaskStatus_Handler,
+		},
+		{
+			MethodName: "UpdateTaskResult",
+			Handler:    _ExecuteTask_UpdateTaskResult_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
