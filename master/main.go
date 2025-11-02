@@ -20,7 +20,8 @@ func main(){
 
 	err := godotenv.Load(".env");
 	if err != nil {
-		log.Fatalf("error while loading env")
+		// log.Fatalf("error while loading env")
+		log.Println("Cannot find env in local")
 	}
 	MONGO_URI := os.Getenv("MONGODB_URI");
 

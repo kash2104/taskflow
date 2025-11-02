@@ -15,7 +15,8 @@ func main(){
 
 	err := godotenv.Load(".env");
 	if err != nil{
-		log.Fatalf("failed to load env")
+		// log.Fatalf("failed to load env")
+		log.Println("Cannot find env in local");
 	}
 
 	ADDRESS := os.Getenv("ADDRESS");
