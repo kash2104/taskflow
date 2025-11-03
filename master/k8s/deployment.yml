@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-deployment
+  namespace: code-executor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master
+  template:
+    metadata:
+      labels:
+        app: master
+    spec:
+      containers:
+        - name: master
+          image: kavish004/code-executor-master:multi-stage
+          ports:
+            - containerPort: 4000
+            - containerPort: 9001
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "128Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: master-secret #secret name given in secret.yml metadata
+                  key: mongodb_url
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: master-configmap
+                  key: http_port
+            - name: GRPC_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: master-configmap #configmap name given in configmap.ym metadata
+                  key: grpc_port

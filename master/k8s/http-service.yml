@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: master-service-http
+  namespace: code-executor
+spec:
+  selector:
+    app: master
+  ports:
+    - protocol: TCP
+      port: 4000
+      targetPort: 4000
+      nodePort: 32030
+  type: NodePort

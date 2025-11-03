@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: master-configmap
+  namespace: code-executor
+data:
+  http_port: ":4000"
+  grpc_port: ":9001"
