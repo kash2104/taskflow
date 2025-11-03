@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: worker-configmap
+  namespace: code-executor
+data:
+  address: "master-service-clusterip.code-executor.svc.cluster.local:9001"
