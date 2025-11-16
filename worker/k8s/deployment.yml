@@ -16,6 +16,8 @@ spec:
       containers:
         - name: worker
           image: kavish004/code-executor-worker:v1
+          securityContext:
+            privileged: true
           resources:
             requests:
               cpu: "128m"
